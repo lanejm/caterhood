@@ -88,10 +88,9 @@ class App {
     this.#cats.forEach(work => {
       this._renderCatMarker(work);
     });
-    setTimeout( function() {
-      map.setView(coords, this.#mapZoomLevel);
-  }, 200);
+  
   }
+  
   _showForm(mapE) {
     this.#mapEvent = mapE;
     form.classList.remove('hidden');
@@ -201,4 +200,7 @@ setTimeout(function () {
   window.dispatchEvent(new Event("resize"));
 }, 500);
 
+// setTimeout(function () { _loadMap() }, 800);
+
 const app = new App();
+

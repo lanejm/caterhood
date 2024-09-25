@@ -27,12 +27,21 @@ body {
   font-weight: 400;
   line-height: 1.6;
   height: 100vh;
-  overscroll-behavior-y: none;
-
+  overscroll-behavior-y: none; 
   background-color: #fff;
-  padding: 2.5rem;
-
+  padding: .5rem;
   display: flex;
+ 
+  /* justify-content: center;
+  align-items: center; */
+  /* flex-wrap: wrap; */
+}
+img {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: 60%;
+  min-width: 50%
 }
 
 /* GENERAL */
@@ -45,15 +54,18 @@ a:visited {
 .sidebar {
   flex-basis: 50rem;
   background-color: var(--color-dark--1);
-  padding: 3rem 5rem 4rem 5rem;
+  padding: 1rem 2rem 1rem 2rem;
   display: flex;
   flex-direction: column;
+  /* border: 10px solid red; */
+  /* min-height: 370px */
 }
 
 .logo {
   height: 20rem;
   align-self: center;
   margin-bottom: 2rem;
+  flex-grow: 1;
 }
 
 .cats {
@@ -81,10 +93,8 @@ a:visited {
 .cat--found {
   border-left: 5px solid var(--color-brand--2);
   font-size: 4.3vw;
+  flex-grow: 1;
 }
-/* .workout--cycling {
-  border-left: 5px solid var(--color-brand--1);
-} */
 
 .cat__title {
   font-size: 1.7rem;
@@ -195,9 +205,11 @@ a:visited {
 
 /* MAP */
 #map {
-  flex: 1;
+  display: flex;
+  flex: 9;
   height: 100%;
   background-color: var(--color-light--1);
+  min-height: 400px;
 }
 
 /* Popup width is defined in JS using options */
@@ -219,6 +231,15 @@ a:visited {
 .running-popup .leaflet-popup-content-wrapper {
   border-left: 5px solid var(--color-brand--2);
 }
-.cycling-popup .leaflet-popup-content-wrapper {
-  border-left: 5px solid var(--color-brand--1);
+
+@media(max-width: 545px) {
+  .sidebar {
+    display: flex;
+  }
+  body {
+    flex-wrap: wrap;
+  }
+  #map {
+    min-width: 295px;
+  }
 }

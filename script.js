@@ -81,14 +81,17 @@ class App {
       attribution:
         '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     }).addTo(this.#map);
+    
     //handling clicks on map
     this.#map.on('click', this._showForm.bind(this));
 
     this.#cats.forEach(work => {
       this._renderCatMarker(work);
     });
+    setTimeout( function() {
+      map.setView(coords, this.#mapZoomLevel);
+  }, 200);
   }
-
   _showForm(mapE) {
     this.#mapEvent = mapE;
     form.classList.remove('hidden');
@@ -194,4 +197,8 @@ class App {
     location.reload();
   }
 }
+setTimeout(function () {
+  window.dispatchEvent(new Event("resize"));
+}, 500);
+
 const app = new App();

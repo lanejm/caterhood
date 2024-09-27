@@ -70,7 +70,7 @@ class App {
         }
       );
   }
-
+  
   _loadMap(position) {
     const { latitude } = position.coords;
     const { longitude } = position.coords;
@@ -80,7 +80,7 @@ class App {
     L.tileLayer('https://tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
       attribution:
         '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-    }).addTo(this.#map);
+    }).addTo(this.#map)
     
     //handling clicks on map
     this.#map.on('click', this._showForm.bind(this));
@@ -88,8 +88,8 @@ class App {
     this.#cats.forEach(work => {
       this._renderCatMarker(work);
     });
-  
   }
+  
   
   _showForm(mapE) {
     this.#mapEvent = mapE;

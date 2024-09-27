@@ -1,4 +1,5 @@
 'use strict';
+
 class Cat {
   date = new Date();
   id = (Date.now() + Math.random()).toString(36);
@@ -75,19 +76,27 @@ class App {
     const { latitude } = position.coords;
     const { longitude } = position.coords;
     const coords = [latitude, longitude];
-    this.#map = L.map('map').setView(coords, this.#mapZoomLevel);
+  //   this.#map = L.map('map').setView(coords, this.#mapZoomLevel);
 
-    L.tileLayer('https://tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
-      attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-    }).addTo(this.#map)
+  //   L.tileLayer('https://tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+  //     attribution:
+  //       '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+  //   }).addTo(this.#map)
     
-    //handling clicks on map
-    this.#map.on('click', this._showForm.bind(this));
+  //   //handling clicks on map
+  //   this.#map.on('click', this._showForm.bind(this));
 
-    this.#cats.forEach(work => {
-      this._renderCatMarker(work);
-    });
+  //   this.#cats.forEach(work => {
+  //     this._renderCatMarker(work);
+  //   });
+  // }
+  mapboxgl.accessToken = 'pk.eyJ1IjoibGFuZWptIiwiYSI6ImNtMWwzN3VhajA0cW4yaXE2cW10cWc3eDUifQ.22Tovpf2EwwFjBc_TSOp3w'
+  const map = new mapboxgl.Map({
+    container: 'map', // container ID
+    style: 'mapbox://styles/mapbox/streets-v12', // style URL
+    center: [longitude, latitude], // starting position [lng, lat]
+    zoom: this.#mapZoomLevel, // starting zoom
+  });
   }
   
   

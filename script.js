@@ -44,6 +44,8 @@ const inputColor = document.querySelector('.form__input--color');
 const inputCoat = document.querySelector('.form__input--coat');
 const inputWeight = document.querySelector('.form__input--weight');
 const inputNotes = document.querySelector('.form__input--notes');
+const el = document.createElement('div')
+el.className = 'cats'
 
 class App {
   #map;
@@ -76,6 +78,15 @@ class App {
     const { latitude } = position.coords;
     const { longitude } = position.coords;
     const coords = [latitude, longitude];
+    mapboxgl.accessToken = 'pk.eyJ1IjoibGFuZWptIiwiYSI6ImNtMWwzN3VhajA0cW4yaXE2cW10cWc3eDUifQ.22Tovpf2EwwFjBc_TSOp3w'
+    
+    const map = new mapboxgl.Map({
+      container: 'map', // container ID
+      style: 'mapbox://styles/mapbox/streets-v12', // style URL
+      center: [longitude, latitude], // starting position [lng, lat]
+      zoom: this.#mapZoomLevel, // starting zoom
+    });
+    
   //   this.#map = L.map('map').setView(coords, this.#mapZoomLevel);
 
   //   L.tileLayer('https://tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
@@ -83,20 +94,12 @@ class App {
   //       '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
   //   }).addTo(this.#map)
     
-  //   //handling clicks on map
-  //   this.#map.on('click', this._showForm.bind(this));
+    //handling clicks on map
+    map.on('click', this._showForm.bind(this));
 
-  //   this.#cats.forEach(work => {
-  //     this._renderCatMarker(work);
-  //   });
-  // }
-  mapboxgl.accessToken = 'pk.eyJ1IjoibGFuZWptIiwiYSI6ImNtMWwzN3VhajA0cW4yaXE2cW10cWc3eDUifQ.22Tovpf2EwwFjBc_TSOp3w'
-  const map = new mapboxgl.Map({
-    container: 'map', // container ID
-    style: 'mapbox://styles/mapbox/streets-v12', // style URL
-    center: [longitude, latitude], // starting position [lng, lat]
-    zoom: this.#mapZoomLevel, // starting zoom
-  });
+    this.#cats.forEach(work => {
+      this._renderCatMarker(work);
+    });
   }
   
   
@@ -127,7 +130,7 @@ class App {
       cat = new FoundCat([lat, lng], weight, coatLength, notes, type);
     }
 
-    //add new object to workout array
+    //add new object to cats array
     this.#cats.push(cat);
 
     //render cat on map as marker
@@ -143,22 +146,23 @@ class App {
 
   //popup on map
   _renderCatMarker(cats) {
-    L.marker(cats.coords)
-      .addTo(this.#map)
-      .bindPopup(
-        L.popup({
-          //change this information below to alter popup style/function
-          maxWidth: 250,
-          minWidth: 100,
-          autoClose: false,
-          closeOnClick: false,
-          className: `${cats.type}-popup`,
-        })
-      )
-      .setPopupContent(
-        `${cats.type === 'found' ? '🐈' : '🚴‍♀️'} ${cats.description}`
-      )
-      .openPopup();
+    const marker = new mapboxgl.Marker(cats).setLngLat([coords]).addTo(map)
+    // L.marker(cats.coords)
+    //   .addTo(this.#map)
+    //   .bindPopup(
+    //     L.popup({
+    //       //change this information below to alter popup style/function
+    //       maxWidth: 250,
+    //       minWidth: 100,
+    //       autoClose: false,
+    //       closeOnClick: false,
+    //       className: `${cats.type}-popup`,
+    //     })
+    //   )
+    //   .setPopupContent(
+    //     `${cats.type === 'found' ? '🐈' : '🚴‍♀️'} ${cats.description}`
+    //   )
+    //   .openPopup();
   }
   _renderCat(cats) {
     let html = `

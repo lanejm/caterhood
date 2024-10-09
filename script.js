@@ -78,6 +78,10 @@ class App {
     const { latitude } = position.coords;
     const { longitude } = position.coords;
     const coords = [latitude, longitude];
+    console.log(position.coords.latitude)
+    console.log(position.coords.longitude)
+    console.log(coords)
+    //public access token
     mapboxgl.accessToken = 'pk.eyJ1IjoibGFuZWptIiwiYSI6ImNtMWwzN3VhajA0cW4yaXE2cW10cWc3eDUifQ.22Tovpf2EwwFjBc_TSOp3w'
     
     const map = new mapboxgl.Map({
@@ -106,7 +110,8 @@ class App {
   _showForm(mapE) {
     this.#mapEvent = mapE;
     form.classList.remove('hidden');
-    inputCoat.focus();
+    inputNotes.focus();
+    // console.log(mapE)
   }
 
   _hideForm() {
@@ -121,13 +126,13 @@ class App {
     const type = inputType.value;
     const weight = inputWeight.value;
     const coatLength = inputCoat.value;
-    const { lat, lng } = this.#mapEvent.latlng;
+    
     let cat;
 
     //if cat is found, create cat object
     if (type === 'found') {
       const notes = inputNotes.value;
-      cat = new FoundCat([lat, lng], weight, coatLength, notes, type);
+      cat = new FoundCat(weight, coatLength, notes, type);
     }
 
     //add new object to cats array
@@ -146,7 +151,18 @@ class App {
 
   //popup on map
   _renderCatMarker(cats) {
-    const marker = new mapboxgl.Marker(cats).setLngLat([coords]).addTo(map)
+    console.log(cats)
+    // const marker = new mapboxgl.Marker(cats).setLngLat().addTo(map)
+    const popupOffSets = {
+      'maxwidth': 250,
+      'minwidth': 100,
+      'closeOnclick': false,
+      'className': `${cats.type}-popup`
+    };
+    
+    // const popup = new mapboxgl.Popup({closedOnclick: false}).setLngLat([cats.coords]).setHTML(`${cats.type === 'found' ? '🐈' : '🚴‍♀️'} ${cats.description}`).addTo(map)
+
+
     // L.marker(cats.coords)
     //   .addTo(this.#map)
     //   .bindPopup(
@@ -176,7 +192,7 @@ class App {
     form.insertAdjacentHTML('afterend', html);
   }
   _moveToPopup(e) {
-    if (!this.#map) return;
+    if (!this.#mapEvent) return;
 
     const catEl = e.target.closest('.cat');
     if (!catEl) return;
@@ -209,9 +225,9 @@ class App {
     location.reload();
   }
 }
-setTimeout(function () {
-  window.dispatchEvent(new Event("resize"));
-}, 500);
+// setTimeout(function () {
+//   window.dispatchEvent(new Event("resize"));
+// }, 500);
 
 // setTimeout(function () { _loadMap() }, 800);
 

@@ -44,8 +44,8 @@ const inputColor = document.querySelector('.form__input--color');
 const inputCoat = document.querySelector('.form__input--coat');
 const inputWeight = document.querySelector('.form__input--weight');
 const inputNotes = document.querySelector('.form__input--notes');
-const el = document.createElement('div')
-el.className = 'cats'
+const el = document.createElement('div');
+el.className = 'cats';
 
 class App {
   #map;
@@ -73,45 +73,31 @@ class App {
         }
       );
   }
-  
+
   _loadMap(position) {
     const { latitude } = position.coords;
     const { longitude } = position.coords;
     const coords = [latitude, longitude];
-    console.log(position.coords.latitude)
-    console.log(position.coords.longitude)
-    console.log(coords)
-    //public access token
-    mapboxgl.accessToken = 'pk.eyJ1IjoibGFuZWptIiwiYSI6ImNtMWwzN3VhajA0cW4yaXE2cW10cWc3eDUifQ.22Tovpf2EwwFjBc_TSOp3w'
     
-    const map = new mapboxgl.Map({
-      container: 'map', // container ID
-      style: 'mapbox://styles/mapbox/streets-v12', // style URL
-      center: [longitude, latitude], // starting position [lng, lat]
-      zoom: this.#mapZoomLevel, // starting zoom
-    });
-    
-  //   this.#map = L.map('map').setView(coords, this.#mapZoomLevel);
+    this.#map = L.map('map').setView(coords, this.#mapZoomLevel);
 
-  //   L.tileLayer('https://tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
-  //     attribution:
-  //       '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-  //   }).addTo(this.#map)
-    
+    L.tileLayer('https://tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+      attribution:
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    }).addTo(this.#map);
+
     //handling clicks on map
-    map.on('click', this._showForm.bind(this));
+    this.#map.on('click', this._showForm.bind(this));
 
     this.#cats.forEach(work => {
       this._renderCatMarker(work);
     });
   }
-  
-  
+
   _showForm(mapE) {
     this.#mapEvent = mapE;
     form.classList.remove('hidden');
     inputNotes.focus();
-    // console.log(mapE)
   }
 
   _hideForm() {
@@ -126,13 +112,14 @@ class App {
     const type = inputType.value;
     const weight = inputWeight.value;
     const coatLength = inputCoat.value;
-    
+    const { lat, lng } = this.#mapEvent.latlng;
     let cat;
 
     //if cat is found, create cat object
     if (type === 'found') {
       const notes = inputNotes.value;
-      cat = new FoundCat(weight, coatLength, notes, type);
+      //new FoundCat must have this order to keep notes displaying correctly
+      cat = new FoundCat([lat, lng], weight, coatLength, notes, type);
     }
 
     //add new object to cats array
@@ -150,62 +137,51 @@ class App {
   }
 
   //popup on map
-  _renderCatMarker(cats) {
-    console.log(cats)
-    // const marker = new mapboxgl.Marker(cats).setLngLat().addTo(map)
-    const popupOffSets = {
-      'maxwidth': 250,
-      'minwidth': 100,
-      'closeOnclick': false,
-      'className': `${cats.type}-popup`
-    };
-    
-    // const popup = new mapboxgl.Popup({closedOnclick: false}).setLngLat([cats.coords]).setHTML(`${cats.type === 'found' ? '🐈' : '🚴‍♀️'} ${cats.description}`).addTo(map)
-
-
-    // L.marker(cats.coords)
-    //   .addTo(this.#map)
-    //   .bindPopup(
-    //     L.popup({
-    //       //change this information below to alter popup style/function
-    //       maxWidth: 250,
-    //       minWidth: 100,
-    //       autoClose: false,
-    //       closeOnClick: false,
-    //       className: `${cats.type}-popup`,
-    //     })
-    //   )
-    //   .setPopupContent(
-    //     `${cats.type === 'found' ? '🐈' : '🚴‍♀️'} ${cats.description}`
-    //   )
-    //   .openPopup();
+  _renderCatMarker(cat) {
+    console.log(cat);
+    L.marker(cat.coords)
+      .addTo(this.#map)
+      .bindPopup(
+        L.popup({
+          //change this information below to alter popup style/function
+          maxWidth: 250,
+          minWidth: 100,
+          autoClose: false,
+          closeOnClick: false,
+          className: `${cat.type}-popup`,
+        })
+      )
+      .setPopupContent(
+        `${cat.type === 'found' ? '🐈' : '🚴‍♀️'} ${cat.description}`
+      )
+      .openPopup();
   }
-  _renderCat(cats) {
+  _renderCat(cat) {
     let html = `
-    <div class="cat cat--${cats.type}" data-id="${cats.id}">
-      <h2 class="cat__title">${cats.description}</h2>
+    <div class="cat cat--${cat.type}" data-id="${cat.id}">
+      <h2 class="cat__title">${cat.description}</h2>
       <div class="cat__details">
-        <span class="cat__value">Notes: ${cats.notes}</span>
+        <span class="cat__value">Notes: ${cat.notes}</span>
       </div>
       </div>
     `;
     form.insertAdjacentHTML('afterend', html);
   }
   _moveToPopup(e) {
-    if (!this.#mapEvent) return;
+    if (!this.#map) return;
 
     const catEl = e.target.closest('.cat');
     if (!catEl) return;
 
-    const cat = this.#cats.find(work => work.id === catEl.dataset.id);
+    const cat = this.#cats.find(cat => cat.id === catEl.dataset.id);
 
     this.#map.setView(cat.coords, this.#mapZoomLevel, {
       animate: true,
       pan: {
         duration: 1,
       },
-    });
-  }
+  })
+}
 
   _setLocalStorage() {
     localStorage.setItem('cats', JSON.stringify(this.#cats));
@@ -225,11 +201,5 @@ class App {
     location.reload();
   }
 }
-// setTimeout(function () {
-//   window.dispatchEvent(new Event("resize"));
-// }, 500);
-
-// setTimeout(function () { _loadMap() }, 800);
 
 const app = new App();
-

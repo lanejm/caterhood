@@ -78,7 +78,7 @@ class App {
     const { latitude } = position.coords;
     const { longitude } = position.coords;
     const coords = [latitude, longitude];
-    
+
     this.#map = L.map('map').setView(coords, this.#mapZoomLevel);
 
     L.tileLayer('https://tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
@@ -104,7 +104,7 @@ class App {
     inputCoat.value = inputWeight.value = inputNotes.value = '';
     form.style.display = 'none';
     form.classList.add('hidden');
-    setTimeout(() => (form.style.display = 'grid'), 1000);
+    // setTimeout(() => (form.style.display = 'grid'), 1000);
   }
   _newCat(e) {
     e.preventDefault();
@@ -180,8 +180,8 @@ class App {
       pan: {
         duration: 1,
       },
-  })
-}
+    });
+  }
 
   _setLocalStorage() {
     localStorage.setItem('cats', JSON.stringify(this.#cats));
@@ -199,6 +199,24 @@ class App {
   reset() {
     localStorage.removeItem('cats');
     location.reload();
+  }
+
+  _deleteCat(e) {
+    const catID = e.target.closest('.cat');
+    const index = this.#cats.findIndex((ind) => ind.id === clickedId)
+
+    this.#cats.splice(index, 1)
+
+    localStorage.setItem('cat', JSON.stringify(this.#cats))
+
+    if(this.#cats.length === 0) {
+      localStorage.removeItem("cat")
+      btnsCustomContainer.classList.add("hidden")
+    }
+
+    // this.#markers.find((cat => cat.markID === clickedId.remove()))
+
+    e.target.closest("cat").remove()
   }
 }
 

@@ -235,16 +235,21 @@ class App {
   }
 
   _getLocalStorage() {
-    const data = JSON.parse(localStorage.getItem('cats'));
+  const data = JSON.parse(localStorage.getItem('cats'));
 
-    if (!data) return;
+  if (!data) return;
 
-    this.#cats = data;
+  this.#cats = data;
 
-    this.#cats.forEach(cat => {
-      this._renderCat(cat);
-    });
-  }
+  this.#cats.forEach(work => {
+    this._renderCat(work);
+
+    // If the map has already loaded, also restore the marker.
+    if (this.#map) {
+      this._renderCatMarker(work);
+    }
+  });
+}
 
   reset() {
     localStorage.removeItem('cats');
